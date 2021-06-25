@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Todo List</title>
+</head>
+
+<style>
+  section {
+    width: 380px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    padding-bottom: 10px;
+  }
+</style>
+
+
+<body>
+<section>
+  <div>
+    <input type="text" id="input-text">
+    <button id="addToDo">Добавить</button>
+  </div>
+
+  <ul id="todoList"></ul>
+
+  <template id="todo-template">
+    <li>
+      <input type="checkbox" />
+      <span class="todo-text">todo text</span>
+      <button class="delete-todo-button" type="button">Удалить</button>
+    </li>
+  </template>
+</section>
+
+<script>
+  let inputText = document.getElementById('input-text');
+  let todoList = document.getElementById('todoList');
+  let todoArray = [];
+  let id = 0;
+
+  document.getElementById('addToDo')
+    .addEventListener('click', () => {
+      let todoText = inputText.value;
+
+      if (todoText.trim() !== '') {
+        todoArray.push({
+          id,
+          todoText,
+          check: false,
+        });
+
+        let newTodo = document.getElementById('todo-template').content.cloneNode(true);
+
+        newTodo.querySelector('li').setAttribute('id', String(id));
+        newTodo.querySelector('.todo-text').textContent = todoText;
+
+        newTodo.querySelector('.delete-todo-button').onclick = (event) => {
+          let li = event.target.parentNode;
+          let delId = li.getAttribute('id');
+          let delIndex = todoArray.findIndex(todo => todo.id === Number(delId));
+
+          if (delIndex >= 0) {
+            todoList.removeChild(li);
+            todoArray.splice(delIndex, 1);
+          }
+        };
+
+        newTodo.querySelector('input').onchange = function() {
+          let li = this.parentNode;
+          let isChecked = this.checked;
+          let checkId = li.getAttribute('id');
+          let checkIndex = todoArray.findIndex(todo => todo.id === Number(checkId));
+
+          if (checkIndex >= 0) {
+            todoArray[checkIndex].check = isChecked;
+          }
+        };
+
+        todoList.appendChild(newTodo);
+        inputText.value = '';
+        id++;
+      } else {
+        alert('Напишите ваше дело!');
+      }
+    });
+</script>
+</body>
+
+</html>
